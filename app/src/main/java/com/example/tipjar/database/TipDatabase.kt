@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.tipjar.database.dao.TipJarDaos
 import com.example.tipjar.database.entity.TipHistory
+/*
 
 @Database(entities = [TipHistory::class], version = 1, exportSchema = false)
 abstract class TipDatabase : RoomDatabase(), TipJarDaos {
@@ -33,4 +34,4 @@ abstract class TipDatabase : RoomDatabase(), TipJarDaos {
             }
         }
     }
-}
+}*/
