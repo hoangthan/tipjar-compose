@@ -3,13 +3,14 @@ package com.example.tipjar.ui.theme
 import androidx.compose.material.darkColors
 import androidx.compose.ui.graphics.Color
 
-val Green500 = Color(0xFF1EB980)
 val DarkBlue900 = Color(0xFF26282F)
+val Orange = Color(0xFFF27A0A)
+val Grey = Color(0xFFE5E5E5)
 
 val ColorPalette = darkColors(
-    primary = Green500,
+    primary = Orange,
     surface = DarkBlue900,
-    onSurface = Color.White,
-    background = DarkBlue900,
-    onBackground = Color.White
+    background = Color.White,
+    onSurface = Color.Black,
+    onBackground = Color.Black
 )
