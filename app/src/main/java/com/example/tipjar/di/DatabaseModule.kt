@@ -1,5 +1,4 @@
 package com.example.tipjar.di
-/*
 
 import android.content.Context
 import com.example.tipjar.database.TipDatabase
@@ -22,5 +21,4 @@ object DatabaseModule {
     ): TipDatabase {
         return TipDatabase.getInstance(context)
     }
-
-}*/
+}
