@@ -5,5 +5,5 @@ import androidx.compose.runtime.Composable
 
 @Composable
 fun TipJarTheme(content: @Composable () -> Unit) {
-    MaterialTheme(colors = ColorPalette, typography = Typography, content = content)
+    MaterialTheme(colors = ColorPalette, typography = TipJarTypography, content = content)
 }
