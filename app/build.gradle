@@ -57,7 +57,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven {url ' https://jitpack.io ' }
+        maven { url ' https://jitpack.io ' }
     }
 }
 
@@ -93,4 +93,6 @@ dependencies {
     annotationProcessor "androidx.room:room-compiler:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
     testImplementation "androidx.room:room-testing:$room_version"
+
+    implementation("io.coil-kt:coil-compose:1.4.0")
 }

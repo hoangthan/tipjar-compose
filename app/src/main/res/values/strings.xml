@@ -8,4 +8,6 @@
     <string name="take_receipt_photo">Take photo of receipt</string>
     <string name="save_payment">Save payment</string>
     <string name="saved_payments">Saved Payments</string>
+    <string name="take_a_photo">Take a photo</string>
+    <string name="take_a_photo_of_your_bill">Take a photo of your bill</string>
 </resources>

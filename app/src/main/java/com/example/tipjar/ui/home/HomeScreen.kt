@@ -43,7 +43,6 @@ import androidx.compose.ui.unit.sp
 import com.example.tipjar.R
 import com.example.tipjar.ui.theme.Grey
 import com.example.tipjar.ui.theme.Orange
-import com.example.tipjar.ui.theme.TipJarTheme
 import com.example.tipjar.ui.theme.TipJarTypography
 import kotlin.math.max
 
@@ -51,99 +50,98 @@ import kotlin.math.max
 @Preview(showBackground = true)
 @Composable
 fun HomeScreen() {
-    TipJarTheme {
-        Scaffold(topBar = { HomeTopBar() }) { innerPadding ->
-            var showDialog by remember { mutableStateOf(false) }
-            var numberOfPeople by remember { mutableIntStateOf(0) }
+    Scaffold(topBar = { HomeTopBar() }) { innerPadding ->
+        var showDialog by remember { mutableStateOf(false) }
+        var numberOfPeople by remember { mutableIntStateOf(0) }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(text = stringResource(id = R.string.enter_amount))
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(text = stringResource(id = R.string.enter_amount))
 
-                    TextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 16.dp),
-                        onValueChange = {
+                TextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                    onValueChange = {
 
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done
-                        ),
-                        value = ""
-                    )
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done
+                    ),
+                    value = ""
+                )
 
-                    NumberOfPeople(numberOfPeople) {
-                        numberOfPeople = max(0, it)
+                NumberOfPeople(numberOfPeople) {
+                    numberOfPeople = max(0, it)
+                }
+
+                Text(
+                    modifier = Modifier.padding(top = 8.dp),
+                    text = stringResource(id = R.string.tip_percentage)
+                )
+
+                TextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                    onValueChange = {
+
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done
+                    ),
+                    value = ""
+                )
+
+                CostView(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 24.dp)
+                )
+
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Bottom,
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(vertical = 16.dp),
+                    ) {
+                        Checkbox(
+                            modifier = Modifier.size(20.dp),
+                            checked = showDialog,
+                            onCheckedChange = { showDialog = !showDialog },
+                            colors = CheckboxDefaults.colors(
+                                uncheckedColor = Grey,
+                                checkedColor = White,
+                                checkmarkColor = Orange,
+                            ),
+                        )
+
+                        Text(
+                            text = stringResource(id = R.string.take_receipt_photo),
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
                     }
 
-                    Text(
-                        modifier = Modifier.padding(top = 8.dp),
-                        text = stringResource(id = R.string.tip_percentage)
-                    )
-
-                    TextField(
+                    Button(
+                        onClick = {},
+                        colors = ButtonDefaults.buttonColors(Orange),
+                        shape = RoundedCornerShape(16.dp),
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 16.dp),
-                        onValueChange = {
-
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done
-                        ),
-                        value = ""
-                    )
-
-                    CostView(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 24.dp)
-                    )
-
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Bottom,
+                            .padding(vertical = 12.dp)
+                            .height(48.dp),
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(vertical = 16.dp),
-                        ) {
-                            Checkbox(
-                                modifier = Modifier.size(20.dp),
-                                checked = showDialog,
-                                onCheckedChange = { showDialog = !showDialog },
-                                colors = CheckboxDefaults.colors(
-                                    uncheckedColor = Grey,
-                                    checkedColor = White,
-                                    checkmarkColor = Orange,
-                                ),
-                            )
-
-                            Text(
-                                text = stringResource(id = R.string.take_receipt_photo),
-                                modifier = Modifier.padding(start = 8.dp)
-                            )
-                        }
-
-                        Button(
-                            onClick = {},
-                            colors = ButtonDefaults.buttonColors(Orange),
-                            shape = RoundedCornerShape(16.dp),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(48.dp),
-                        ) {
-                            Text(
-                                text = stringResource(id = R.string.save_payment),
-                                color = White,
-                                style = TipJarTypography.subtitle1
-                            )
-                        }
+                        Text(
+                            text = stringResource(id = R.string.save_payment),
+                            color = White,
+                            style = TipJarTypography.subtitle1
+                        )
                     }
                 }
             }
