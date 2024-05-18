@@ -1,6 +1,7 @@
 package com.example.tipjar.ui.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
@@ -22,8 +24,14 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -31,11 +39,13 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.tipjar.R
 import com.example.tipjar.ui.theme.Grey
 import com.example.tipjar.ui.theme.Orange
 import com.example.tipjar.ui.theme.TipJarTheme
 import com.example.tipjar.ui.theme.TipJarTypography
+import kotlin.math.max
 
 
 @Preview(showBackground = true)
@@ -43,6 +53,9 @@ import com.example.tipjar.ui.theme.TipJarTypography
 fun HomeScreen() {
     TipJarTheme {
         Scaffold(topBar = { HomeTopBar() }) { innerPadding ->
+            var showDialog by remember { mutableStateOf(false) }
+            var numberOfPeople by remember { mutableIntStateOf(0) }
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -64,7 +77,9 @@ fun HomeScreen() {
                         value = ""
                     )
 
-                    NumberOfPeople()
+                    NumberOfPeople(numberOfPeople) {
+                        numberOfPeople = max(0, it)
+                    }
 
                     Text(
                         modifier = Modifier.padding(top = 8.dp),
@@ -100,8 +115,8 @@ fun HomeScreen() {
                         ) {
                             Checkbox(
                                 modifier = Modifier.size(20.dp),
-                                checked = false,
-                                onCheckedChange = {},
+                                checked = showDialog,
+                                onCheckedChange = { showDialog = !showDialog },
                                 colors = CheckboxDefaults.colors(
                                     uncheckedColor = Grey,
                                     checkedColor = White,
@@ -161,7 +176,9 @@ fun CostView(modifier: Modifier = Modifier) {
 
 @Composable
 fun NumberOfPeople(
+    numberOfPeople: Int,
     modifier: Modifier = Modifier,
+    onNumberOfPeopleChange: (Int) -> Unit,
 ) {
     Column(modifier = modifier) {
 
@@ -173,23 +190,44 @@ fun NumberOfPeople(
                 .padding(vertical = 16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(
-                text = "+", modifier = Modifier.align(Alignment.CenterVertically)
-            )
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .clickable { onNumberOfPeopleChange(numberOfPeople + 1) }
+                    .size(71.dp)
+                    .clip(CircleShape)
+                    .background(Grey)
+                    .padding(1.dp)
+                    .clip(CircleShape)
+                    .background(White),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = "+", color = Orange, fontSize = 42.sp
+                )
+            }
 
             Text(
-                text = "0",
+                text = numberOfPeople.toString(),
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .wrapContentWidth(Alignment.CenterHorizontally)
             )
 
-            Text(
-                text = "-",
+            Box(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
-                    .wrapContentWidth(Alignment.End)
-            )
+                    .clickable { onNumberOfPeopleChange(numberOfPeople - 1) }
+                    .size(71.dp)
+                    .clip(CircleShape)
+                    .background(Grey)
+                    .padding(1.dp)
+                    .clip(CircleShape)
+                    .background(White), contentAlignment = Alignment.Center) {
+                Text(
+                    text = "-", color = Orange, fontSize = 42.sp
+                )
+            }
         }
     }
 }
