@@ -7,4 +7,5 @@
     <string name="person_cost">Per Person</string>
     <string name="take_receipt_photo">Take photo of receipt</string>
     <string name="save_payment">Save payment</string>
+    <string name="saved_payments">Saved Payments</string>
 </resources>
