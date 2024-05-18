@@ -1,7 +1,7 @@
-package com.example.tipjar.di
+package com.example.tipjar.data.database
 
 import android.content.Context
-import com.example.tipjar.database.TipDatabase
+import com.example.tipjar.data.database.dao.TipHistoryDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -10,8 +10,8 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 
-@InstallIn(SingletonComponent::class)
 @Module
+@InstallIn(SingletonComponent::class)
 object DatabaseModule {
 
     @Singleton
@@ -20,5 +20,11 @@ object DatabaseModule {
         @ApplicationContext context: Context
     ): TipDatabase {
         return TipDatabase.getInstance(context)
+    }
+
+    @Singleton
+    @Provides
+    fun provideTipHistoryDao(tipDatabase: TipDatabase): TipHistoryDao {
+        return tipDatabase.tipHistoryDao()
     }
 }
