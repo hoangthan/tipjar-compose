@@ -55,7 +55,7 @@ import kotlin.math.max
 @Composable
 fun HomeScreen() {
     Scaffold(topBar = { HomeTopBar() }) { innerPadding ->
-        var showDialog by remember { mutableStateOf(false) }
+        var takePhoto by remember { mutableStateOf(false) }
         var numberOfPeople by remember { mutableIntStateOf(1) }
         var amountString by remember { mutableStateOf("") }
         var tipPercentString by remember { mutableStateOf("10") }
@@ -140,12 +140,15 @@ fun HomeScreen() {
                 ) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(vertical = 16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { takePhoto = !takePhoto }
+                            .padding(vertical = 16.dp),
                     ) {
                         Checkbox(
                             modifier = Modifier.size(20.dp),
-                            checked = showDialog,
-                            onCheckedChange = { showDialog = !showDialog },
+                            checked = takePhoto,
+                            onCheckedChange = { takePhoto = !takePhoto },
                             colors = CheckboxDefaults.colors(
                                 uncheckedColor = Grey,
                                 checkedColor = White,
@@ -245,6 +248,7 @@ fun NumberOfPeople(
             )
 
             Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .clickable { onNumberOfPeopleChange(numberOfPeople - 1) }
@@ -253,10 +257,9 @@ fun NumberOfPeople(
                     .background(Grey)
                     .padding(1.dp)
                     .clip(CircleShape)
-                    .background(White), contentAlignment = Alignment.Center) {
-                Text(
-                    text = "-", color = Orange, fontSize = 42.sp
-                )
+                    .background(White),
+            ) {
+                Text(text = "-", color = Orange, fontSize = 42.sp)
             }
         }
     }
