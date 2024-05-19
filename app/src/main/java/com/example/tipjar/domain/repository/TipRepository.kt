@@ -7,7 +7,7 @@ interface TipRepository {
 
     suspend fun getTip(id: Long): TipModel?
 
-    suspend fun saveTip(tip: TipModel)
+    suspend fun saveTip(billAmount: Double, tipAmount: Double, imageUrl: String?)
 
     fun getAllTip(): Flow<List<TipModel>>
 }

@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import coil.compose.rememberImagePainter
 import com.example.tipjar.R
 import java.io.File
@@ -91,7 +92,7 @@ fun CaptureImageFromCamera(onDone: (String?) -> Unit = {}) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.TopCenter),
-                painter = rememberImagePainter(capturedImageUri),
+                painter = rememberImagePainter(capturedImageUri.toString()),
                 contentDescription = "BillImage",
                 contentScale = ContentScale.FillBounds,
             )
@@ -102,13 +103,15 @@ fun CaptureImageFromCamera(onDone: (String?) -> Unit = {}) {
                 .height(48.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .align(Alignment.BottomCenter),
-                onClick = { onDone(capturedImageUri.path) }) {
+                onClick = {
+                    onDone(capturedImageUri.path)
+                }) {
                 Text(text = stringResource(id = R.string.save_payment))
             }
         }
     }
 
-    onDone(capturedImageUri.path)
+    onDone(capturedImageUri.toString())
 }
 
 private fun Context.createImageFile(): File {

@@ -16,7 +16,6 @@ data class TipHistory(
     @ColumnInfo(name = "image_url") val imageUrl: String? = null
 )
 
-
 fun TipModel.toTipHistory() = TipHistory(
     id = id,
     billAmount = billAmount,

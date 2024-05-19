@@ -1,7 +1,7 @@
 package com.example.tipjar.data.repository
 
 import com.example.tipjar.data.database.dao.TipHistoryDao
-import com.example.tipjar.data.database.entity.toTipHistory
+import com.example.tipjar.data.database.entity.TipHistory
 import com.example.tipjar.data.database.entity.toTipModel
 import com.example.tipjar.domain.model.TipModel
 import com.example.tipjar.domain.repository.TipRepository
@@ -17,8 +17,13 @@ class TipRepositoryImpl @Inject constructor(
         return tipDao.getById(id)?.toTipModel()
     }
 
-    override suspend fun saveTip(tip: TipModel) {
-        val tipEntity = tip.toTipHistory()
+    override suspend fun saveTip(billAmount: Double, tipAmount: Double, imageUrl: String?) {
+        val tipEntity = TipHistory(
+            billAmount = billAmount,
+            tipAmount = tipAmount,
+            imageUrl = imageUrl
+        )
+
         tipDao.insert(tipEntity)
     }
 

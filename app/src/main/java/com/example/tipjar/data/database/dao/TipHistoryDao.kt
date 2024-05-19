@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 interface TipHistoryDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(tipHistory: TipHistory)
+    suspend fun insert(vararg tipHistory: TipHistory)
 
     @Query("SELECT * FROM tip_history WHERE id = :id")
     suspend fun getById(id: Long): TipHistory?
