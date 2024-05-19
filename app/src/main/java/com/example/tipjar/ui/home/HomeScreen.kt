@@ -25,8 +25,6 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -40,23 +38,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.tipjar.R
 import com.example.tipjar.ui.home.HomeScreenViewModel.HomeViewEvent
+import com.example.tipjar.ui.home.HomeScreenViewModel.HomeViewState
 import com.example.tipjar.ui.theme.Grey
 import com.example.tipjar.ui.theme.Orange
 import com.example.tipjar.ui.theme.TipJarTypography
 
 
-@Preview(showBackground = true)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(
+    viewState: HomeViewState,
+    dispatchEvent: (HomeViewEvent) -> Unit,
+) {
     Scaffold(topBar = { HomeTopBar() }) { innerPadding ->
-        val viewModel: HomeScreenViewModel = hiltViewModel()
-        val viewState by viewModel.state.collectAsStateWithLifecycle()
-        val billData by viewModel.billData.collectAsStateWithLifecycle()
-
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -69,7 +64,7 @@ fun HomeScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 16.dp),
-                    onValueChange = { viewModel.dispatchEvent(HomeViewEvent.UpdateAmount(it)) },
+                    onValueChange = { dispatchEvent(HomeViewEvent.UpdateAmount(it)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Done
@@ -95,7 +90,7 @@ fun HomeScreen() {
                     viewState.numberOfPeople,
                     modifier = Modifier.padding(vertical = 16.dp)
                 ) {
-                    viewModel.dispatchEvent(HomeViewEvent.UpdateNumberOfPeople(it))
+                    dispatchEvent(HomeViewEvent.UpdateNumberOfPeople(it))
                 }
 
                 Text(text = stringResource(id = R.string.tip_percentage))
@@ -104,9 +99,7 @@ fun HomeScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 16.dp),
-                    onValueChange = {
-                        viewModel.dispatchEvent(HomeViewEvent.UpdateTipPercent(it))
-                    },
+                    onValueChange = { dispatchEvent(HomeViewEvent.UpdateTipPercent(it)) },
                     shape = RoundedCornerShape(16.dp),
                     singleLine = true,
                     keyboardOptions = KeyboardOptions.Default.copy(
@@ -119,8 +112,8 @@ fun HomeScreen() {
                 )
 
                 CostView(
-                    totalTip = billData.totalTip,
-                    perPerson = billData.perPerson,
+                    totalTip = viewState.totalTip,
+                    perPerson = viewState.perPerson,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 24.dp)
@@ -134,15 +127,13 @@ fun HomeScreen() {
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { viewModel.dispatchEvent(HomeViewEvent.UpdateTakePhoto) }
+                            .clickable { dispatchEvent(HomeViewEvent.UpdateTakePhoto) }
                             .padding(vertical = 16.dp),
                     ) {
                         Checkbox(
                             modifier = Modifier.size(20.dp),
                             checked = viewState.takePhotoReceipt,
-                            onCheckedChange = {
-                                viewModel.dispatchEvent(HomeViewEvent.UpdateTakePhoto)
-                            },
+                            onCheckedChange = { dispatchEvent(HomeViewEvent.UpdateTakePhoto) },
                             colors = CheckboxDefaults.colors(
                                 uncheckedColor = Grey,
                                 checkedColor = White,
@@ -276,4 +267,10 @@ fun HomeTopBar(onHistoryClick: () -> Unit = {}) {
                 .align(Alignment.CenterEnd)
                 .clickable { onHistoryClick() })
     }
+}
+
+@Preview
+@Composable
+fun HomeScreenPreview() {
+    HomeScreen(HomeViewState()) {}
 }
