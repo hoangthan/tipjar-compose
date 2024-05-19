@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,9 +21,9 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxDefaults
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -31,12 +32,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -44,6 +47,7 @@ import com.example.tipjar.R
 import com.example.tipjar.ui.theme.Grey
 import com.example.tipjar.ui.theme.Orange
 import com.example.tipjar.ui.theme.TipJarTypography
+import com.example.tipjar.ui.utils.asCurrencyString
 import kotlin.math.max
 
 
@@ -52,7 +56,17 @@ import kotlin.math.max
 fun HomeScreen() {
     Scaffold(topBar = { HomeTopBar() }) { innerPadding ->
         var showDialog by remember { mutableStateOf(false) }
-        var numberOfPeople by remember { mutableIntStateOf(0) }
+        var numberOfPeople by remember { mutableIntStateOf(1) }
+        var amountString by remember { mutableStateOf("") }
+        var tipPercentString by remember { mutableStateOf("10") }
+
+        val totalTip by remember(amountString, tipPercentString, numberOfPeople) {
+            val amount = amountString.toDoubleOrNull() ?: 0.0
+            val percent = amountString.toDoubleOrNull() ?: 0.0
+            val tipAmount = amount * percent / 100
+            val costPerPerson = (amount + tipAmount) / max(numberOfPeople, 1)
+            mutableStateOf(tipAmount to costPerPerson)
+        }
 
         Box(
             modifier = Modifier
@@ -62,42 +76,59 @@ fun HomeScreen() {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(text = stringResource(id = R.string.enter_amount))
 
-                TextField(
+                OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 16.dp),
-                    onValueChange = {
-
-                    },
+                    onValueChange = { amountString = it },
                     keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done
+                        keyboardType = KeyboardType.Decimal,
+                        imeAction = ImeAction.Done
                     ),
-                    value = ""
+                    placeholder = {
+                        Text(
+                            text = "100.00",
+                            modifier = Modifier
+                                .alpha(.3f)
+                                .fillMaxWidth(),
+                            style = TipJarTypography.h3.copy(textAlign = TextAlign.Center)
+                        )
+                    },
+                    shape = RoundedCornerShape(16.dp),
+                    singleLine = true,
+                    value = amountString,
+                    textStyle = TipJarTypography.h3.copy(textAlign = TextAlign.Center),
+                    leadingIcon = { Text(text = "$", style = TipJarTypography.h5) },
+                    trailingIcon = { Box(modifier = Modifier.width(24.dp)) }
                 )
 
-                NumberOfPeople(numberOfPeople) {
-                    numberOfPeople = max(0, it)
+                NumberOfPeople(numberOfPeople, modifier = Modifier.padding(vertical = 16.dp)) {
+                    numberOfPeople = max(1, it)
                 }
 
-                Text(
-                    modifier = Modifier.padding(top = 8.dp),
-                    text = stringResource(id = R.string.tip_percentage)
-                )
+                Text(text = stringResource(id = R.string.tip_percentage))
 
-                TextField(
+                OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 16.dp),
                     onValueChange = {
-
+                        tipPercentString = it
                     },
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Decimal, imeAction = ImeAction.Done
+                    shape = RoundedCornerShape(16.dp),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        keyboardType = KeyboardType.Number
                     ),
-                    value = ""
+                    textStyle = TipJarTypography.h3.copy(textAlign = TextAlign.Center),
+                    value = tipPercentString,
+                    trailingIcon = { Text(text = "%", style = TipJarTypography.h5) },
+                    leadingIcon = { Box(modifier = Modifier.width(24.dp)) }
                 )
 
                 CostView(
+                    totalTip = totalTip.first,
+                    perPerson = totalTip.second,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 24.dp)
@@ -137,11 +168,7 @@ fun HomeScreen() {
                             .padding(vertical = 12.dp)
                             .height(48.dp),
                     ) {
-                        Text(
-                            text = stringResource(id = R.string.save_payment),
-                            color = White,
-                            style = TipJarTypography.subtitle1
-                        )
+                        Text(text = stringResource(id = R.string.save_payment))
                     }
                 }
             }
@@ -150,14 +177,18 @@ fun HomeScreen() {
 }
 
 @Composable
-fun CostView(modifier: Modifier = Modifier) {
+fun CostView(
+    totalTip: Double,
+    perPerson: Double,
+    modifier: Modifier = Modifier
+) {
     Column(modifier = modifier) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(text = stringResource(id = R.string.total_tip))
-            Text(text = stringResource(id = R.string.total_tip))
+            Text(text = totalTip.asCurrencyString())
         }
 
         Row(
@@ -166,8 +197,8 @@ fun CostView(modifier: Modifier = Modifier) {
                 .fillMaxWidth()
                 .padding(top = 16.dp),
         ) {
-            Text(text = stringResource(id = R.string.person_cost))
-            Text(text = stringResource(id = R.string.person_cost))
+            Text(text = stringResource(id = R.string.person_cost), style = TipJarTypography.h5)
+            Text(text = perPerson.asCurrencyString(), style = TipJarTypography.h5)
         }
     }
 }
@@ -209,7 +240,8 @@ fun NumberOfPeople(
                 text = numberOfPeople.toString(),
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
-                    .wrapContentWidth(Alignment.CenterHorizontally)
+                    .wrapContentWidth(Alignment.CenterHorizontally),
+                style = TipJarTypography.h3
             )
 
             Box(
