@@ -7,7 +7,7 @@ class SavePaymentUseCase @Inject constructor(
     private val paymentRepository: TipRepository
 ) {
     suspend operator fun invoke(data: SavePaymentData) {
-        paymentRepository.saveTip(
+        paymentRepository.save(
             billAmount = data.billAmount,
             tipAmount = data.tipAmount,
             imageUrl = data.billPhoto

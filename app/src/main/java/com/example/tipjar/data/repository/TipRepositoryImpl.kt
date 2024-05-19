@@ -13,11 +13,11 @@ class TipRepositoryImpl @Inject constructor(
     private val tipDao: TipHistoryDao,
 ) : TipRepository {
 
-    override suspend fun getTip(id: Long): TipModel? {
+    override suspend fun getById(id: Long): TipModel? {
         return tipDao.getById(id)?.toTipModel()
     }
 
-    override suspend fun saveTip(billAmount: Double, tipAmount: Double, imageUrl: String?) {
+    override suspend fun save(billAmount: Double, tipAmount: Double, imageUrl: String?) {
         val tipEntity = TipHistory(
             billAmount = billAmount,
             tipAmount = tipAmount,
@@ -27,7 +27,11 @@ class TipRepositoryImpl @Inject constructor(
         tipDao.insert(tipEntity)
     }
 
-    override fun getAllTip(): Flow<List<TipModel>> {
+    override suspend fun deleteById(id: Long) {
+        tipDao.deleteById(id)
+    }
+
+    override fun getAll(): Flow<List<TipModel>> {
         return tipDao.getAll().map { tips ->
             tips.map { it.toTipModel() }
         }

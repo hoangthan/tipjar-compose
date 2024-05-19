@@ -5,9 +5,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface TipRepository {
 
-    suspend fun getTip(id: Long): TipModel?
+    suspend fun getById(id: Long): TipModel?
 
-    suspend fun saveTip(billAmount: Double, tipAmount: Double, imageUrl: String?)
+    suspend fun save(billAmount: Double, tipAmount: Double, imageUrl: String?)
 
-    fun getAllTip(): Flow<List<TipModel>>
+    suspend fun deleteById(id: Long)
+
+    fun getAll(): Flow<List<TipModel>>
 }

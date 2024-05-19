@@ -18,4 +18,7 @@ interface TipHistoryDao {
 
     @Query("SELECT * FROM tip_history")
     fun getAll(): Flow<List<TipHistory>>
+
+    @Query("DELETE FROM tip_history WHERE id = :id")
+    suspend fun deleteById(id: Long)
 }

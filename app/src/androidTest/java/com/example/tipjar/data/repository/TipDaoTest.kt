@@ -45,6 +45,20 @@ class TipDaoTest {
     }
 
     @Test
+    fun deleteTipById_success() = runTest {
+        val insertRecords = listOf(
+            TipHistory(1, 1.0, 1.0, "img"),
+            TipHistory(2, 1.0, 1.0, "img")
+        )
+        tipDao.insert(*insertRecords.toTypedArray())
+        tipDao.deleteById(2)
+
+        val allRecords = tipDao.getAll().first()
+        Assert.assertTrue(allRecords.size == 1)
+        Assert.assertTrue(allRecords.first().id == 1L)
+    }
+
+    @Test
     fun saveTip_replace_same_key() = runTest {
         val insertRecords = listOf(
             TipHistory(1, 1.0, 1.0, "img"),
