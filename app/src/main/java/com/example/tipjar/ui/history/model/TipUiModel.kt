@@ -16,7 +16,7 @@ data class TipUiModel(
 fun TipModel.toUiModel(): TipUiModel {
     return TipUiModel(
         id = id,
-        createAt = id.toDateFormat(),
+        createAt = createAt.toDateFormat(),
         billAmount = billAmount.toString(),
         tipAmount = tipAmount.toString(),
         imageUrl = imageUrl

@@ -149,7 +149,11 @@ fun HomeScreen(
 
                     Button(
                         onClick = {
-
+                            if(viewState.takePhotoReceipt) {
+                                
+                            } else {
+                                dispatchEvent(HomeViewEvent.OnSavePaymentClicked)
+                            }
                         },
                         colors = ButtonDefaults.buttonColors(Orange),
                         shape = RoundedCornerShape(16.dp),

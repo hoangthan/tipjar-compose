@@ -16,16 +16,10 @@ data class TipHistory(
     @ColumnInfo(name = "image_url") val imageUrl: String? = null
 )
 
-fun TipModel.toTipHistory() = TipHistory(
-    id = id,
-    billAmount = billAmount,
-    tipAmount = tipAmount,
-    imageUrl = imageUrl
-)
-
 fun TipHistory.toTipModel() = TipModel(
     id = id,
     billAmount = billAmount,
     tipAmount = tipAmount,
-    imageUrl = imageUrl
+    imageUrl = imageUrl,
+    createAt = id //Since currently, we are using the timestamp as the id of record
 )

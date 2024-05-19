@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.tipjar.ui.history.HistoryScreen
+import com.example.tipjar.ui.history.HistoryViewModel
 import com.example.tipjar.ui.home.HomeScreen
 import com.example.tipjar.ui.home.HomeViewModel
 import com.example.tipjar.ui.theme.TipJarTheme
@@ -20,9 +22,13 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             TipJarTheme {
-                val homeViewModel: HomeViewModel = hiltViewModel()
+                /*val homeViewModel: HomeViewModel = hiltViewModel()
                 val state by homeViewModel.state.collectAsState()
-                HomeScreen(state, homeViewModel::dispatchEvent)
+                HomeScreen(state, homeViewModel::dispatchEvent)*/
+
+                val historyViewModel: HistoryViewModel = hiltViewModel()
+                val state by historyViewModel.viewState.collectAsState()
+                HistoryScreen(state, historyViewModel::dispatchViewEvent)
             }
         }
     }
