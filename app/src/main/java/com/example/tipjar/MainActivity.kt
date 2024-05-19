@@ -7,7 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.tipjar.ui.home.HomeScreen
-import com.example.tipjar.ui.home.HomeScreenViewModel
+import com.example.tipjar.ui.home.HomeViewModel
 import com.example.tipjar.ui.theme.TipJarTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             TipJarTheme {
-                val homeViewModel: HomeScreenViewModel = hiltViewModel()
+                val homeViewModel: HomeViewModel = hiltViewModel()
                 val state by homeViewModel.state.collectAsState()
                 HomeScreen(state, homeViewModel::dispatchEvent)
             }

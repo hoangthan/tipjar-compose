@@ -18,7 +18,7 @@ import javax.inject.Inject
 import kotlin.math.max
 
 @HiltViewModel
-class HomeScreenViewModel @Inject constructor(
+class HomeViewModel @Inject constructor(
     private val dispatcherProvider: DispatcherProvider,
     private val savePaymentUseCase: SavePaymentUseCase,
     private val calculatePayment: CalculatePaymentUseCase,

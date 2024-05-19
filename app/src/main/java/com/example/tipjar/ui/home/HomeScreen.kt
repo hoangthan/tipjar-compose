@@ -39,8 +39,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tipjar.R
-import com.example.tipjar.ui.home.HomeScreenViewModel.HomeViewEvent
-import com.example.tipjar.ui.home.HomeScreenViewModel.HomeViewState
+import com.example.tipjar.ui.home.HomeViewModel.HomeViewEvent
+import com.example.tipjar.ui.home.HomeViewModel.HomeViewState
 import com.example.tipjar.ui.theme.Grey
 import com.example.tipjar.ui.theme.Orange
 import com.example.tipjar.ui.theme.TipJarTypography
@@ -148,7 +148,9 @@ fun HomeScreen(
                     }
 
                     Button(
-                        onClick = {},
+                        onClick = {
+
+                        },
                         colors = ButtonDefaults.buttonColors(Orange),
                         shape = RoundedCornerShape(16.dp),
                         modifier = Modifier
