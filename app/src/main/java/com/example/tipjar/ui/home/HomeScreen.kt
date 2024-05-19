@@ -25,11 +25,8 @@ import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -43,30 +40,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.tipjar.R
+import com.example.tipjar.ui.home.HomeScreenViewModel.HomeViewEvent
 import com.example.tipjar.ui.theme.Grey
 import com.example.tipjar.ui.theme.Orange
 import com.example.tipjar.ui.theme.TipJarTypography
-import com.example.tipjar.ui.utils.asCurrencyString
-import kotlin.math.max
 
 
 @Preview(showBackground = true)
 @Composable
 fun HomeScreen() {
     Scaffold(topBar = { HomeTopBar() }) { innerPadding ->
-        var takePhoto by remember { mutableStateOf(false) }
-        var numberOfPeople by remember { mutableIntStateOf(1) }
-        var amountString by remember { mutableStateOf("") }
-        var tipPercentString by remember { mutableStateOf("10") }
-
-        val totalTip by remember(amountString, tipPercentString, numberOfPeople) {
-            val amount = amountString.toDoubleOrNull() ?: 0.0
-            val percent = amountString.toDoubleOrNull() ?: 0.0
-            val tipAmount = amount * percent / 100
-            val costPerPerson = (amount + tipAmount) / max(numberOfPeople, 1)
-            mutableStateOf(tipAmount to costPerPerson)
-        }
+        val viewModel: HomeScreenViewModel = hiltViewModel()
+        val viewState by viewModel.state.collectAsStateWithLifecycle()
+        val billData by viewModel.billData.collectAsStateWithLifecycle()
 
         Box(
             modifier = Modifier
@@ -80,7 +69,7 @@ fun HomeScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 16.dp),
-                    onValueChange = { amountString = it },
+                    onValueChange = { viewModel.dispatchEvent(HomeViewEvent.UpdateAmount(it)) },
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Decimal,
                         imeAction = ImeAction.Done
@@ -96,14 +85,17 @@ fun HomeScreen() {
                     },
                     shape = RoundedCornerShape(16.dp),
                     singleLine = true,
-                    value = amountString,
+                    value = viewState.billAmount,
                     textStyle = TipJarTypography.h3.copy(textAlign = TextAlign.Center),
                     leadingIcon = { Text(text = "$", style = TipJarTypography.h5) },
                     trailingIcon = { Box(modifier = Modifier.width(24.dp)) }
                 )
 
-                NumberOfPeople(numberOfPeople, modifier = Modifier.padding(vertical = 16.dp)) {
-                    numberOfPeople = max(1, it)
+                NumberOfPeople(
+                    viewState.numberOfPeople,
+                    modifier = Modifier.padding(vertical = 16.dp)
+                ) {
+                    viewModel.dispatchEvent(HomeViewEvent.UpdateNumberOfPeople(it))
                 }
 
                 Text(text = stringResource(id = R.string.tip_percentage))
@@ -113,7 +105,7 @@ fun HomeScreen() {
                         .fillMaxWidth()
                         .padding(vertical = 16.dp),
                     onValueChange = {
-                        tipPercentString = it
+                        viewModel.dispatchEvent(HomeViewEvent.UpdateTipPercent(it))
                     },
                     shape = RoundedCornerShape(16.dp),
                     singleLine = true,
@@ -121,14 +113,14 @@ fun HomeScreen() {
                         keyboardType = KeyboardType.Number
                     ),
                     textStyle = TipJarTypography.h3.copy(textAlign = TextAlign.Center),
-                    value = tipPercentString,
+                    value = viewState.tipPercent,
                     trailingIcon = { Text(text = "%", style = TipJarTypography.h5) },
                     leadingIcon = { Box(modifier = Modifier.width(24.dp)) }
                 )
 
                 CostView(
-                    totalTip = totalTip.first,
-                    perPerson = totalTip.second,
+                    totalTip = billData.totalTip,
+                    perPerson = billData.perPerson,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 24.dp)
@@ -142,13 +134,15 @@ fun HomeScreen() {
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { takePhoto = !takePhoto }
+                            .clickable { viewModel.dispatchEvent(HomeViewEvent.UpdateTakePhoto) }
                             .padding(vertical = 16.dp),
                     ) {
                         Checkbox(
                             modifier = Modifier.size(20.dp),
-                            checked = takePhoto,
-                            onCheckedChange = { takePhoto = !takePhoto },
+                            checked = viewState.takePhotoReceipt,
+                            onCheckedChange = {
+                                viewModel.dispatchEvent(HomeViewEvent.UpdateTakePhoto)
+                            },
                             colors = CheckboxDefaults.colors(
                                 uncheckedColor = Grey,
                                 checkedColor = White,
@@ -181,8 +175,8 @@ fun HomeScreen() {
 
 @Composable
 fun CostView(
-    totalTip: Double,
-    perPerson: Double,
+    totalTip: String,
+    perPerson: String,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier) {
@@ -191,7 +185,7 @@ fun CostView(
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(text = stringResource(id = R.string.total_tip))
-            Text(text = totalTip.asCurrencyString())
+            Text(text = totalTip)
         }
 
         Row(
@@ -201,7 +195,7 @@ fun CostView(
                 .padding(top = 16.dp),
         ) {
             Text(text = stringResource(id = R.string.person_cost), style = TipJarTypography.h5)
-            Text(text = perPerson.asCurrencyString(), style = TipJarTypography.h5)
+            Text(text = perPerson, style = TipJarTypography.h5)
         }
     }
 }
@@ -234,9 +228,7 @@ fun NumberOfPeople(
                     .background(White),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(
-                    text = "+", color = Orange, fontSize = 42.sp
-                )
+                Text(text = "+", color = Orange, fontSize = 42.sp)
             }
 
             Text(
