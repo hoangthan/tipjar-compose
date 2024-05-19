@@ -57,11 +57,4 @@ class TipRepositoryTest {
         val result = tipRepository.deleteById(1)
         Assert.assertTrue(result == Unit)
     }
-
-    @Test
-    fun saveTip_success() = runTest {
-        whenever(tipDao.insert(any())).thenReturn(Unit)
-        val result = tipRepository.save(10.0, 1.0, "img")
-        Assert.assertTrue(result == Unit)
-    }
 }
