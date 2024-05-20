@@ -7,7 +7,9 @@ import com.example.tipjar.domain.usecase.SavePaymentUseCase
 import com.example.tipjar.ui.common.DispatcherProvider
 import com.example.tipjar.ui.utils.asCurrencyString
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
@@ -28,6 +30,9 @@ class HomeViewModel @Inject constructor(
     private val _state = MutableStateFlow(HomeViewState())
     val state = _state.asStateFlow()
 
+    private val _viewEffect = MutableSharedFlow<HomeViewEffect>()
+    val viewEffect = _viewEffect.asSharedFlow()
+
     init {
         listenStateChangeAndCalculate()
     }
@@ -46,11 +51,13 @@ class HomeViewModel @Inject constructor(
                 val calculatePaymentResult = calculatePayment(param)
                 val totalTip = calculatePaymentResult.totalTip.asCurrencyString()
                 val perPerson = calculatePaymentResult.costPerPerson.asCurrencyString()
+                val enableSave = internalState.billAmount.isNotEmpty()
 
                 _state.update {
                     internalState.copy(
                         totalTip = totalTip,
-                        perPerson = perPerson
+                        perPerson = perPerson,
+                        enableSave = enableSave
                     )
                 }
             }
@@ -61,7 +68,7 @@ class HomeViewModel @Inject constructor(
     fun dispatchEvent(event: HomeViewEvent) {
         when (event) {
             is HomeViewEvent.OnSavePaymentClicked -> {
-                savePayment()
+                handleOnPaymentClicked()
             }
 
             is HomeViewEvent.UpdateAmount -> {
@@ -81,19 +88,36 @@ class HomeViewModel @Inject constructor(
             is HomeViewEvent.UpdateTipPercent -> {
                 _internalState.update { it.copy(tipPercent = event.percent) }
             }
+
+            is HomeViewEvent.SetBillImage -> {
+                _internalState.update { it.copy(billPhoto = event.imagePath) }
+            }
+        }
+    }
+
+    private fun handleOnPaymentClicked() {
+        val currentState = _state.value
+        if (currentState.takePhotoReceipt && currentState.billPhoto.isNullOrEmpty()) {
+            viewModelScope.launch { _viewEffect.emit(HomeViewEffect.LaunchCamera) }
+        } else {
+            savePayment()
         }
     }
 
     private fun savePayment() {
         viewModelScope.launch(dispatcherProvider.io) {
             val param = SavePaymentUseCase.SavePaymentData(
-                billAmount = state.value.billAmount.toDouble(),
-                tipAmount = state.value.tipPercent.toDouble(),
+                billAmount = state.value.billAmount.toDoubleOrNull() ?: 0.0,
+                tipAmount = state.value.tipPercent.toDoubleOrNull() ?: 0.0,
                 billPhoto = state.value.billPhoto
             )
             savePaymentUseCase(param)
             _internalState.update { HomeViewState() }
         }
+    }
+
+    sealed interface HomeViewEffect {
+        data object LaunchCamera : HomeViewEffect
     }
 
     sealed interface HomeViewEvent {
@@ -102,6 +126,7 @@ class HomeViewModel @Inject constructor(
         data class UpdateAmount(val amount: String) : HomeViewEvent
         data class UpdateNumberOfPeople(val amount: Int) : HomeViewEvent
         data class UpdateTipPercent(val percent: String) : HomeViewEvent
+        data class SetBillImage(val imagePath: String?) : HomeViewEvent
     }
 
     data class HomeViewState(
@@ -111,6 +136,7 @@ class HomeViewModel @Inject constructor(
         val takePhotoReceipt: Boolean = false,
         val billPhoto: String? = null,
         val totalTip: String = "",
-        val perPerson: String = ""
+        val perPerson: String = "",
+        val enableSave: Boolean = false,
     )
 }

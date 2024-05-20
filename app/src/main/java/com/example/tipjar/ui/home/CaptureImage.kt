@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,14 +25,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.core.net.toUri
 import coil.compose.rememberImagePainter
 import com.example.tipjar.R
 import java.io.File
@@ -42,7 +45,10 @@ import java.util.Locale
 
 @Preview
 @Composable
-fun CaptureImageFromCamera(onDone: (String?) -> Unit = {}) {
+fun CaptureImageFromCamera(
+    onDone: (String?) -> Unit = {},
+    onBack: () -> Unit = {},
+) {
     val context = LocalContext.current
     val file = context.createImageFile()
     val uri = FileProvider.getUriForFile(context, context.packageName + ".provider", file)
@@ -109,9 +115,17 @@ fun CaptureImageFromCamera(onDone: (String?) -> Unit = {}) {
                 Text(text = stringResource(id = R.string.save_payment))
             }
         }
-    }
 
-    onDone(capturedImageUri.toString())
+        Image(
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .clickable { onBack() }
+                .padding(16.dp),
+            painter = painterResource(id = R.drawable.abc_vector_test),
+            contentDescription = "ImageBack",
+            colorFilter = ColorFilter.tint(Color.Black)
+        )
+    }
 }
 
 private fun Context.createImageFile(): File {

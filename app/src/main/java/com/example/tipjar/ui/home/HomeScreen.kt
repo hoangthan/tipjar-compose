@@ -49,7 +49,7 @@ import com.example.tipjar.ui.theme.TipJarTypography
 @Composable
 fun HomeScreen(
     viewState: HomeViewState,
-    dispatchEvent: (HomeViewEvent) -> Unit,
+    dispatchEvent: (HomeViewEvent) -> Unit = {},
 ) {
     Scaffold(topBar = { HomeTopBar() }) { innerPadding ->
         Box(
@@ -148,15 +148,10 @@ fun HomeScreen(
                     }
 
                     Button(
-                        onClick = {
-                            if (viewState.takePhotoReceipt) {
-
-                            } else {
-                                dispatchEvent(HomeViewEvent.OnSavePaymentClicked)
-                            }
-                        },
+                        onClick = { dispatchEvent(HomeViewEvent.OnSavePaymentClicked) },
                         colors = ButtonDefaults.buttonColors(Orange),
                         shape = RoundedCornerShape(16.dp),
+                        enabled = viewState.enableSave,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 12.dp)
