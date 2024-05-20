@@ -161,7 +161,13 @@ fun HomeScreen(
                             .padding(vertical = 12.dp)
                             .height(48.dp),
                     ) {
-                        Text(text = stringResource(id = R.string.save_payment))
+                        Text(
+                            text = if (viewState.takePhotoReceipt && viewState.billPhoto.isNullOrEmpty()) {
+                                stringResource(id = R.string.take_a_photo)
+                            } else {
+                                stringResource(id = R.string.save_payment)
+                            }
+                        )
                     }
                 }
             }

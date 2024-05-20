@@ -37,10 +37,7 @@ class MainActivity : AppCompatActivity() {
                         val state by viewModel.state.collectAsStateWithLifecycle()
                         val viewEffect by viewModel.viewEffect.collectAsStateWithLifecycle(null)
 
-                        navController.CollectDataResult<String?>(
-                            key = "imgPath",
-                            initialValue = null
-                        ) {
+                        navController.CollectDataResult<String>(key = "imgPath") {
                             viewModel.dispatchEvent(HomeViewEvent.SaveBillImage(it))
                         }
 

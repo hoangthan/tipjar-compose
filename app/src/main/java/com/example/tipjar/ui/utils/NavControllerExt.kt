@@ -6,10 +6,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 
 @Composable
-inline fun <reified T> NavController.CollectDataResult(
+fun <T> NavController.CollectDataResult(
     key: String,
-    initialValue: T,
-    crossinline result: (T) -> Unit
+    initialValue: T? = null,
+    result: (T?) -> Unit
 ) {
     val resultState = currentBackStackEntry
         ?.savedStateHandle

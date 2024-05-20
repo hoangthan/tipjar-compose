@@ -113,7 +113,7 @@ fun CaptureImageFromCamera(
                     onFinish(capturedImageUri.toString())
                 }
             ) {
-                Text(text = stringResource(id = R.string.save_payment))
+                Text(text = stringResource(id = R.string.use_photo))
             }
         }
 
