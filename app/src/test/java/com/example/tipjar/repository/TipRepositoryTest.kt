@@ -36,7 +36,7 @@ class TipRepositoryTest {
         whenever(tipDao.getById(1)).thenReturn(TipHistory(1, 10.0, 1.0, "img"))
         val record = tipRepository.getById(1)
         Assert.assertNotNull(record)
-        Assert.assertEquals(record, TipModel(1, 10.0, 1.0, "img"))
+        Assert.assertEquals(record, TipModel(1, 10.0, 1.0, "img", 1))
     }
 
     @Test

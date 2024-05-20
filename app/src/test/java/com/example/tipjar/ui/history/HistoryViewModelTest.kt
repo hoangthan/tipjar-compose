@@ -1,12 +1,12 @@
 package com.example.tipjar.ui.history
 
 import app.cash.turbine.test
+import com.example.tipjar.common.TestDispatcherProvider
 import com.example.tipjar.common.TestViewModelScopeRule
 import com.example.tipjar.domain.model.TipModel
 import com.example.tipjar.domain.usecase.DeleteTipRecordUseCase
 import com.example.tipjar.domain.usecase.GetAllTipHistoryUseCase
-import com.example.tipjar.ui.common.AppDispatcherProvider
-import com.example.tipjar.ui.history.HistoryViewModel.ViewEvent.*
+import com.example.tipjar.ui.history.HistoryViewModel.ViewEvent
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
@@ -35,7 +35,7 @@ class HistoryViewModelTest {
     private lateinit var deletePaymentUseCase: DeleteTipRecordUseCase
 
     @Spy
-    private lateinit var dispatcherProvider: AppDispatcherProvider
+    private lateinit var dispatcherProvider: TestDispatcherProvider
 
     @get:Rule
     val dispatcherRule = TestViewModelScopeRule()
@@ -43,8 +43,8 @@ class HistoryViewModelTest {
     @Test
     fun initViewModel_and_loadData_success() = runTest {
         val fakeRecords = listOf(
-            TipModel(id = 1L, billAmount = 10.0, tipAmount = 1.0, imageUrl = "img"),
-            TipModel(id = 2L, billAmount = 10.0, tipAmount = 1.0, imageUrl = "img")
+            TipModel(id = 1L, billAmount = 10.0, tipAmount = 1.0, createAt = 1111, imageUrl = "img"),
+            TipModel(id = 2L, billAmount = 10.0, tipAmount = 1.0, createAt = 1111, imageUrl = "img")
         )
 
         whenever(loadHistoryUseCase()).thenReturn(flowOf(fakeRecords))
@@ -68,8 +68,8 @@ class HistoryViewModelTest {
     @Test
     fun testDelete_success() = runTest {
         val fakeRecords = listOf(
-            TipModel(id = 1L, billAmount = 10.0, tipAmount = 1.0, imageUrl = "img"),
-            TipModel(id = 2L, billAmount = 10.0, tipAmount = 1.0, imageUrl = "img")
+            TipModel(id = 1L, billAmount = 10.0, tipAmount = 1.0, createAt = 111, imageUrl = "img"),
+            TipModel(id = 2L, billAmount = 10.0, tipAmount = 1.0, createAt = 111, imageUrl = "img")
         )
 
         val flowData = MutableStateFlow(fakeRecords)
@@ -83,8 +83,9 @@ class HistoryViewModelTest {
 
         advanceUntilIdle()
 
-        historyViewModel.dispatchViewEvent(ShowBillDetails(1))
+        historyViewModel.dispatchViewEvent(ViewEvent.DeleteTipRecord(1))
         flowData.update { it.filterNot { it.id == 1L } }
+        advanceUntilIdle()
 
         historyViewModel.viewState.test {
             val expectData = awaitItem()

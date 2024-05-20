@@ -33,7 +33,7 @@ class HomeViewModel @Inject constructor(
     }
 
     // Since we want to free the main thread from calculation task,
-    // by listing the changes of state flow and calculation in Default dispatcher then emit new value to Main Thread display
+    // by listing the changes of state flow and calculation in Background then emit new value to Main Thread display
     private fun listenStateChangeAndCalculate() {
         _internalState
             .onEach { internalState ->
@@ -54,7 +54,7 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
-            .flowOn(dispatcherProvider.default)
+            .flowOn(dispatcherProvider.io)
             .launchIn(viewModelScope)
     }
 
