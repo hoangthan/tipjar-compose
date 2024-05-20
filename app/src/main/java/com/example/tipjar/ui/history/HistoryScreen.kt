@@ -27,15 +27,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberImagePainter
 import com.example.tipjar.R
 import com.example.tipjar.ui.history.HistoryViewModel.HistoryViewState
+import com.example.tipjar.ui.history.HistoryViewModel.ViewEvent
 import com.example.tipjar.ui.history.model.TipUiModel
 import com.example.tipjar.ui.theme.TipJarTypography
 
 @Composable
 fun HistoryScreen(
     viewState: HistoryViewState,
-    onEventSent: (HistoryViewModel.ViewEvent) -> Unit = {},
+    onEventSent: (ViewEvent) -> Unit = {},
 ) {
     Scaffold(topBar = {
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -68,7 +70,7 @@ fun HistoryScreen(
                 items(viewState.payments.size) { index ->
                     TipViewItem(
                         tipModel = viewState.payments[index],
-                        onItemClicked = { onEventSent(HistoryViewModel.ViewEvent.DeleteTipRecord(it.id)) }
+                        onItemClicked = { onEventSent(ViewEvent.ShowBillDetails(it.id)) }
                     )
                 }
             }
@@ -106,15 +108,18 @@ fun TipViewItem(
                 verticalAlignment = Alignment.Bottom
             ) {
                 Text(
-                    text = tipModel.billAmount,
+                    text = "$${tipModel.billAmount}",
                     style = TipJarTypography.h5,
                     textAlign = TextAlign.End,
+                    modifier = Modifier.alignByBaseline()
                 )
+
                 Text(
-                    text = tipModel.tipAmount,
+                    text = "Tip: $${tipModel.tipAmount}",
                     modifier = Modifier
-                        .padding(start = 24.dp)
-                        .alpha(.6f),
+                        .padding(start = 36.dp)
+                        .alpha(.6f)
+                        .alignByBaseline(),
                     style = TipJarTypography.body1,
                 )
             }
@@ -122,7 +127,7 @@ fun TipViewItem(
 
         if (tipModel.imageUrl.isNullOrEmpty().not()) {
             Image(
-                painter = painterResource(id = R.drawable.ic_history),
+                painter = rememberImagePainter(tipModel.imageUrl),
                 contentDescription = "ImageTipThumbnail",
                 modifier = Modifier
                     .size(53.dp)
@@ -137,7 +142,7 @@ fun TipViewItem(
 fun TipViewItemPreview() {
     HistoryScreen(
         viewState = HistoryViewState(
-            listOf(TipUiModel(1, "1", "2", "3", "4"))
+            listOf(TipUiModel(1, "2021 January 14", "105.23", "20.52", "4"))
         )
     )
 }

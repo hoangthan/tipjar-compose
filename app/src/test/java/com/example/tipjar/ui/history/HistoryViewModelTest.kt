@@ -83,7 +83,7 @@ class HistoryViewModelTest {
 
         advanceUntilIdle()
 
-        historyViewModel.dispatchViewEvent(DeleteTipRecord(1))
+        historyViewModel.dispatchViewEvent(ShowBillDetails(1))
         flowData.update { it.filterNot { it.id == 1L } }
 
         historyViewModel.viewState.test {

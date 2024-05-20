@@ -149,8 +149,8 @@ fun HomeScreen(
 
                     Button(
                         onClick = {
-                            if(viewState.takePhotoReceipt) {
-                                
+                            if (viewState.takePhotoReceipt) {
+
                             } else {
                                 dispatchEvent(HomeViewEvent.OnSavePaymentClicked)
                             }

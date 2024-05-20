@@ -10,4 +10,5 @@
     <string name="saved_payments">Saved Payments</string>
     <string name="take_a_photo">Take a photo</string>
     <string name="take_a_photo_of_your_bill">Take a photo of your bill</string>
+    <string name="this_recod_have_no_image">This record have no image</string>
 </resources>

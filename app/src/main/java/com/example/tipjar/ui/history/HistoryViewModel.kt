@@ -43,8 +43,13 @@ class HistoryViewModel @Inject constructor(
 
     fun dispatchViewEvent(event: ViewEvent) {
         when (event) {
-            is ViewEvent.DeleteTipRecord -> deletePayment(event.id)
+            is ViewEvent.ShowBillDetails -> deletePayment(event.id)
+            is ViewEvent.DeleteTipRecord -> showBillDetails(event.id)
         }
+    }
+
+    private fun showBillDetails(id: Long) {
+
     }
 
     private fun deletePayment(id: Long) {
@@ -55,6 +60,7 @@ class HistoryViewModel @Inject constructor(
 
     sealed interface ViewEvent {
         data class DeleteTipRecord(val id: Long) : ViewEvent
+        data class ShowBillDetails(val id: Long) : ViewEvent
     }
 
     data class HistoryViewState(
