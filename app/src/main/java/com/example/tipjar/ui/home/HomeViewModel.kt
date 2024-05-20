@@ -89,7 +89,7 @@ class HomeViewModel @Inject constructor(
                 _internalState.update { it.copy(tipPercent = event.percent) }
             }
 
-            is HomeViewEvent.SetBillImage -> {
+            is HomeViewEvent.SaveBillImage -> {
                 _internalState.update { it.copy(billPhoto = event.imagePath) }
             }
 
@@ -135,7 +135,7 @@ class HomeViewModel @Inject constructor(
         data class UpdateAmount(val amount: String) : HomeViewEvent
         data class UpdateNumberOfPeople(val amount: Int) : HomeViewEvent
         data class UpdateTipPercent(val percent: String) : HomeViewEvent
-        data class SetBillImage(val imagePath: String?) : HomeViewEvent
+        data class SaveBillImage(val imagePath: String?) : HomeViewEvent
     }
 
     data class HomeViewState(

@@ -46,8 +46,7 @@ import java.util.Locale
 @Preview
 @Composable
 fun CaptureImageFromCamera(
-    onDone: (String?) -> Unit = {},
-    onBack: () -> Unit = {},
+    onFinish: (String?) -> Unit = {},
 ) {
     val context = LocalContext.current
     val file = context.createImageFile()
@@ -103,15 +102,17 @@ fun CaptureImageFromCamera(
                 contentScale = ContentScale.FillBounds,
             )
 
-            Button(modifier = Modifier
-                .fillMaxWidth()
-                .padding(24.dp)
-                .height(48.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .align(Alignment.BottomCenter),
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp)
+                    .height(48.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .align(Alignment.BottomCenter),
                 onClick = {
-                    onDone(capturedImageUri.path)
-                }) {
+                    onFinish(capturedImageUri.toString())
+                }
+            ) {
                 Text(text = stringResource(id = R.string.save_payment))
             }
         }
@@ -119,7 +120,7 @@ fun CaptureImageFromCamera(
         Image(
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .clickable { onBack() }
+                .clickable { onFinish(null) }
                 .padding(16.dp),
             painter = painterResource(id = R.drawable.abc_vector_test),
             contentDescription = "ImageBack",

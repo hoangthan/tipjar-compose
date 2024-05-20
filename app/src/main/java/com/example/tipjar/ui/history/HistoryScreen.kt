@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -130,6 +131,7 @@ fun TipViewItem(
             Image(
                 painter = rememberImagePainter(tipModel.imageUrl),
                 contentDescription = "ImageTipThumbnail",
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .size(53.dp)
                     .clip(RoundedCornerShape(16.dp))

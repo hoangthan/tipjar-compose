@@ -16,7 +16,9 @@ import com.example.tipjar.ui.history.HistoryViewModel
 import com.example.tipjar.ui.home.CaptureImageFromCamera
 import com.example.tipjar.ui.home.HomeScreen
 import com.example.tipjar.ui.home.HomeViewModel
+import com.example.tipjar.ui.home.HomeViewModel.HomeViewEvent
 import com.example.tipjar.ui.theme.TipJarTheme
+import com.example.tipjar.ui.utils.CollectDataResult
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -35,8 +37,12 @@ class MainActivity : AppCompatActivity() {
                         val state by viewModel.state.collectAsStateWithLifecycle()
                         val viewEffect by viewModel.viewEffect.collectAsStateWithLifecycle(null)
 
-                        val imgPath = navController.currentBackStackEntry?.savedStateHandle?.get<String>("imgPath")
-                        viewModel.dispatchEvent(HomeViewModel.HomeViewEvent.SetBillImage(imgPath))
+                        navController.CollectDataResult<String?>(
+                            key = "imgPath",
+                            initialValue = null
+                        ) {
+                            viewModel.dispatchEvent(HomeViewEvent.SaveBillImage(it))
+                        }
 
                         LaunchedEffect(viewEffect) {
                             when (viewEffect) {
@@ -59,10 +65,7 @@ class MainActivity : AppCompatActivity() {
 
                     composable(route = "camera") {
                         CaptureImageFromCamera(
-                            onBack = {
-                                navController.popBackStack()
-                            },
-                            onDone = {
+                            onFinish = {
                                 navController.previousBackStackEntry?.savedStateHandle?.set(
                                     "imgPath",
                                     it
