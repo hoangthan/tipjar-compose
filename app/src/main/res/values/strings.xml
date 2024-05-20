@@ -12,4 +12,5 @@
     <string name="take_a_photo_of_your_bill">Take a photo of your bill</string>
     <string name="this_recod_have_no_image">This record have no image</string>
     <string name="use_photo">Use Photo</string>
+    <string name="no_saved_payment">No saved payment.</string>
 </resources>

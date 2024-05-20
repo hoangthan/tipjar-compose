@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -73,7 +74,11 @@ fun HistoryScreen(
     }) { innerPadding ->
         var showBillDetails by remember { mutableStateOf<TipUiModel?>(null) }
 
-        Box(modifier = Modifier.padding(innerPadding)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
             LazyColumn {
                 items(viewState.payments.size) { index ->
                     TipViewItem(
@@ -81,6 +86,16 @@ fun HistoryScreen(
                         onItemClicked = { showBillDetails = viewState.payments[index] }
                     )
                 }
+            }
+
+            if (viewState.payments.isEmpty()) {
+                Text(
+                    style = TipJarTypography.body2,
+                    text = stringResource(id = R.string.no_saved_payment),
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .alpha(0.7f),
+                )
             }
         }
 
@@ -164,7 +179,7 @@ fun TipViewItem(
 fun TipViewItemPreview() {
     HistoryScreen(
         viewState = HistoryViewState(
-            listOf(TipUiModel(1, "2021 January 14", "105.23", "20.52", "4"))
+            listOf()
         )
     )
 }
