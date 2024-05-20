@@ -51,7 +51,11 @@ fun HomeScreen(
     viewState: HomeViewState,
     dispatchEvent: (HomeViewEvent) -> Unit = {},
 ) {
-    Scaffold(topBar = { HomeTopBar() }) { innerPadding ->
+    Scaffold(
+        topBar = {
+            HomeTopBar { dispatchEvent(HomeViewEvent.OnHistoryClicked) }
+        }
+    ) { innerPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()

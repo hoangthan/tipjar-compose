@@ -38,6 +38,7 @@ import com.example.tipjar.ui.theme.TipJarTypography
 fun HistoryScreen(
     viewState: HistoryViewState,
     onEventSent: (ViewEvent) -> Unit = {},
+    onBackPressed: () -> Unit = {},
 ) {
     Scaffold(topBar = {
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -55,7 +56,7 @@ fun HistoryScreen(
                 Image(
                     modifier = Modifier
                         .align(Alignment.CenterStart)
-                        .clickable { },
+                        .clickable { onBackPressed() },
                     painter = painterResource(id = R.drawable.abc_vector_test),
                     contentDescription = "ImageBack",
                     colorFilter = ColorFilter.tint(Color.Black),

@@ -92,6 +92,12 @@ class HomeViewModel @Inject constructor(
             is HomeViewEvent.SetBillImage -> {
                 _internalState.update { it.copy(billPhoto = event.imagePath) }
             }
+
+            is HomeViewEvent.OnHistoryClicked -> {
+                viewModelScope.launch {
+                    _viewEffect.emit(HomeViewEffect.NavigateToHistory)
+                }
+            }
         }
     }
 
@@ -112,17 +118,20 @@ class HomeViewModel @Inject constructor(
                 billPhoto = state.value.billPhoto
             )
             savePaymentUseCase(param)
+            _viewEffect.emit(HomeViewEffect.NavigateToHistory)
             _internalState.update { HomeViewState() }
         }
     }
 
     sealed interface HomeViewEffect {
         data object LaunchCamera : HomeViewEffect
+        data object NavigateToHistory : HomeViewEffect
     }
 
     sealed interface HomeViewEvent {
         data object UpdateTakePhoto : HomeViewEvent
         data object OnSavePaymentClicked : HomeViewEvent
+        data object OnHistoryClicked : HomeViewEvent
         data class UpdateAmount(val amount: String) : HomeViewEvent
         data class UpdateNumberOfPeople(val amount: Int) : HomeViewEvent
         data class UpdateTipPercent(val percent: String) : HomeViewEvent

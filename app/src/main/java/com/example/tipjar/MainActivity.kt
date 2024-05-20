@@ -4,12 +4,15 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.tipjar.ui.history.HistoryScreen
+import com.example.tipjar.ui.history.HistoryViewModel
 import com.example.tipjar.ui.home.CaptureImageFromCamera
 import com.example.tipjar.ui.home.HomeScreen
 import com.example.tipjar.ui.home.HomeViewModel
@@ -30,16 +33,24 @@ class MainActivity : AppCompatActivity() {
                     composable(route = "home") {
                         val viewModel: HomeViewModel = hiltViewModel()
                         val state by viewModel.state.collectAsStateWithLifecycle()
-                        val viewEffect by viewModel.viewEffect.collectAsStateWithLifecycle(
-                            initialValue = null
-                        )
+                        val viewEffect by viewModel.viewEffect.collectAsStateWithLifecycle(null)
 
                         val imgPath = navController.currentBackStackEntry?.savedStateHandle?.get<String>("imgPath")
                         viewModel.dispatchEvent(HomeViewModel.HomeViewEvent.SetBillImage(imgPath))
 
                         LaunchedEffect(viewEffect) {
-                            if (viewEffect is HomeViewModel.HomeViewEffect.LaunchCamera) {
-                                navController.navigate("camera")
+                            when (viewEffect) {
+                                HomeViewModel.HomeViewEffect.LaunchCamera -> {
+                                    navController.navigate("camera")
+                                }
+
+                                HomeViewModel.HomeViewEffect.NavigateToHistory -> {
+                                    navController.navigate("history")
+                                }
+
+                                else -> {
+                                    // Do nothing
+                                }
                             }
                         }
 
@@ -60,11 +71,15 @@ class MainActivity : AppCompatActivity() {
                             }
                         )
                     }
-                }
 
-                /*val historyViewModel: HistoryViewModel = hiltViewModel()
-                val state by historyViewModel.viewState.collectAsState()
-                HistoryScreen(state, historyViewModel::dispatchViewEvent)*/
+                    composable(route = "history") {
+                        val historyViewModel: HistoryViewModel = hiltViewModel()
+                        val state by historyViewModel.viewState.collectAsState()
+                        HistoryScreen(state, historyViewModel::dispatchViewEvent) {
+                            navController.popBackStack()
+                        }
+                    }
+                }
             }
         }
     }
