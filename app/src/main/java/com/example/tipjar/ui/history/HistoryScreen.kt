@@ -16,6 +16,10 @@ import androidx.compose.material.Divider
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -67,15 +71,30 @@ fun HistoryScreen(
             Divider()
         }
     }) { innerPadding ->
+        var showBillDetails by remember { mutableStateOf<TipUiModel?>(null) }
+
         Box(modifier = Modifier.padding(innerPadding)) {
             LazyColumn {
                 items(viewState.payments.size) { index ->
                     TipViewItem(
                         tipModel = viewState.payments[index],
-                        onItemClicked = { onEventSent(ViewEvent.ShowBillDetails(it.id)) }
+                        onItemClicked = { showBillDetails = viewState.payments[index] }
                     )
                 }
             }
+        }
+
+        showBillDetails?.let {
+            BillDetailDialog(
+                tipModel = it,
+                onDeleteClick = {
+                    showBillDetails = null
+                    onEventSent(ViewEvent.DeleteTipRecord(it.id))
+                },
+                onDismissRequest = {
+                    showBillDetails = null
+                }
+            )
         }
     }
 }

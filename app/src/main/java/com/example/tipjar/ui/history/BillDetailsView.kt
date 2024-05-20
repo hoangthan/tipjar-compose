@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,29 +25,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import coil.compose.rememberImagePainter
 import com.example.tipjar.R
 import com.example.tipjar.ui.history.model.TipUiModel
-import com.example.tipjar.ui.theme.Grey
 import com.example.tipjar.ui.theme.TipJarTypography
 
 @Composable
-fun BillDetailView(
+fun BillDetailDialog(
     tipModel: TipUiModel,
-    onDeleteClick: () -> Unit = {}
+    onDeleteClick: () -> Unit = {},
+    onDismissRequest: () -> Unit = {}
 ) {
-    Box(modifier = Modifier.fillMaxSize()) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Grey)
-                .alpha(.5f)
-        )
-
+    Dialog(onDismissRequest = onDismissRequest) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -132,5 +122,5 @@ fun BillDetailView(
 @Preview
 @Composable
 fun BillDetailViewPreview() {
-    BillDetailView(TipUiModel(1, "2021 January 14", "105.23", "20.52", ""))
+    BillDetailDialog(TipUiModel(1, "2021 January 14", "105.23", "20.52", ""))
 }
